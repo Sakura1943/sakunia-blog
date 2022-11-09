@@ -1,0 +1,600 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://git.sakunia.tk/Sakura1943/imgs/releases/download/imgs/favicon.jpg">
+  <link rel="icon" href="https://git.sakunia.tk/Sakura1943/imgs/releases/download/imgs/favicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Sakunia">
+  <meta name="keywords" content="sakunia">
+  
+    <meta name="description" content="pixiv 图片下载服务 (仅使用画师id进行下载)  一、简介该项目由 RainChain 提供的接口进行进一步封装提供了将对应画师id的前30张图片下载本地的服务源API接口作者接口文档地址 https:&#x2F;&#x2F;api.hcyacg.com 二、接口信息   接口地址 接口参数 参数类型 参数描述    http:&#x2F;&#x2F;localhost:3000&#x2F;down uid GET 传入画师uid, 在后台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过画师 id 下载图片到本地">
+<meta property="og:url" content="https://blog.sakunia.tk/2022/04/23/pixiv-images-download-with-painter-id/index.html">
+<meta property="og:site_name" content="Sakunia">
+<meta property="og:description" content="pixiv 图片下载服务 (仅使用画师id进行下载)  一、简介该项目由 RainChain 提供的接口进行进一步封装提供了将对应画师id的前30张图片下载本地的服务源API接口作者接口文档地址 https:&#x2F;&#x2F;api.hcyacg.com 二、接口信息   接口地址 接口参数 参数类型 参数描述    http:&#x2F;&#x2F;localhost:3000&#x2F;down uid GET 传入画师uid, 在后台">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-23T15:25:13.000Z">
+<meta property="article:modified_time" content="2022-11-09T13:45:17.033Z">
+<meta property="article:author" content="Sakunia">
+<meta property="article:tag" content="pixiv">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>通过画师 id 下载图片到本地 - Sakunia</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"blog.sakunia.tk","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Sakunia</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-mini-program-fill"></i>
+                其他
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://alist.sakura1943.top">
+                    
+                    Alist网盘列表
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://eatneko.sakunia.tk">
+                    
+                    吃猫猫小游戏
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://sakunia.tk">
+                    
+                    短链接服务
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://pic.sakunia.tk">
+                    
+                    Github图床上传
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://map.minecraft.sakura1943.top">
+                    
+                    Minecraft在线地图
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bc.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="通过画师 id 下载图片到本地">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-04-23 23:25" pubdate>
+        2022年4月23日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      9 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">通过画师 id 下载图片到本地</h1>
+            
+            <div class="markdown-body">
+              <h1 id="pixiv-图片下载服务"><a href="#pixiv-图片下载服务" class="headerlink" title="pixiv 图片下载服务"></a>pixiv 图片下载服务</h1><blockquote>
+<p>(仅使用画师<code>id</code>进行下载)</p>
+</blockquote>
+<h2 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h2><p>该项目由 <a target="_blank" rel="noopener" href="https://rainchan.win/">RainChain</a> 提供的接口进行进一步封装<br>提供了将对应画师<code>id</code>的前30张图片下载本地的服务<br>源API接口作者接口文档地址 <a target="_blank" rel="noopener" href="https://api.hcyacg.com/">https://api.hcyacg.com</a></p>
+<h2 id="二、接口信息"><a href="#二、接口信息" class="headerlink" title="二、接口信息"></a>二、接口信息</h2><table>
+<thead>
+<tr>
+<th>接口地址</th>
+<th>接口参数</th>
+<th>参数类型</th>
+<th>参数描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>http://localhost:3000/down</code></td>
+<td><code>uid</code></td>
+<td><code>GET</code></td>
+<td>传入画师<code>uid</code>, 在后台下载， 并返回存储地址</td>
+</tr>
+<tr>
+<td><code>http://localhost:3000/get/list</code></td>
+<td><code>uid</code>(<code>type</code>为<code>once</code>下使用) &amp; <code>type</code></td>
+<td><code>GET</code></td>
+<td>传入<code>type</code>=<code>once</code>时, 传入画师<code>uid</code>, 并返回存在的图片列表; 传入<code>type</code>=<code>all</code>时, 获得所有已下载的画师作品</td>
+</tr>
+<tr>
+<td><code>http://localhost:3000/get/show</code></td>
+<td><code>uid</code> &amp; <code>pid</code></td>
+<td><code>GET</code></td>
+<td><code>uid</code>即画师id, <code>pid</code>即画师作品id(通过<code>get/list</code>接口获得)</td>
+</tr>
+</tbody></table>
+<h2 id="三、使用"><a href="#三、使用" class="headerlink" title="三、使用"></a>三、使用</h2><h3 id="1、克隆该仓库到本地"><a href="#1、克隆该仓库到本地" class="headerlink" title="1、克隆该仓库到本地"></a>1、克隆该仓库到本地</h3><figure class="highlight shell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/Sakura1943/PixivImagesDownload.git<br></code></pre></td></tr></table></figure>
+
+<p>若下载较慢， 可以尝试使用<code>github</code>的反向代理进行克隆</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://proxy.sakunia.tk/https://github.com/Sakura1943/PixivImagesDownload.git<br></code></pre></td></tr></table></figure>
+
+<h3 id="2、编辑config-ini配置文件"><a href="#2、编辑config-ini配置文件" class="headerlink" title="2、编辑config.ini配置文件"></a>2、编辑<code>config.ini</code>配置文件</h3><p>项目配置文件在项目目录下的<code>config/config.ini</code></p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment">; 服务地址</span><br><span class="hljs-section">[app]</span><br><span class="hljs-comment">; 服务端口，默认 3000</span><br><span class="hljs-attr">PORT</span>=<span class="hljs-number">3000</span><br><span class="hljs-comment">; 主机地址， 默认 localhost</span><br><span class="hljs-attr">HOST</span>=localhost<br><span class="hljs-comment">; 存储位置</span><br><span class="hljs-section">[img]</span><br><span class="hljs-comment">; 默认， 于项目根目录的 images 文件夹</span><br><span class="hljs-attr">IMAGE_DIR_PATH</span>=images<br></code></pre></td></tr></table></figure>
+
+<h3 id="3、安装node项目依赖"><a href="#3、安装node项目依赖" class="headerlink" title="3、安装node项目依赖"></a>3、安装<code>node</code>项目依赖</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">npm install<br></code></pre></td></tr></table></figure>
+
+<h3 id="4、运行"><a href="#4、运行" class="headerlink" title="4、运行"></a>4、运行</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">npm run dev<br></code></pre></td></tr></table></figure>
+
+<h3 id="5、调用接口"><a href="#5、调用接口" class="headerlink" title="5、调用接口"></a>5、调用接口</h3><p>下载</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">curl http://localhost:3000/down?uid=xxxx<br></code></pre></td></tr></table></figure>
+
+<p>下载完就会提示保存的路径了</p>
+<p>查看列表</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">curl http://localhost:3000/get/list?type=once&amp;uid=xxx<br>或者<br>curl http://localhost:3000/get/list?type=all<br></code></pre></td></tr></table></figure>
+
+<p>查看图片</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">浏览器输入地址: http://localhost:3000/get/show?uid=xxx&amp;pid=xxx<br></code></pre></td></tr></table></figure>
+
+<h2 id="四、开源协议"><a href="#四、开源协议" class="headerlink" title="四、开源协议"></a>四、开源协议</h2><p><a target="_blank" rel="noopener" href="https://github.com/Sakura1943/PixivImagesDownload/blob/main/LICENSE">GNU GPLv3</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Pixiv/">Pixiv</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/pixiv/">pixiv</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/06/TypeScriptConfigurationTemplate/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">TypeScript配置文件模板</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/30/render_cloudreve/">
+                        <span class="hidden-mobile">使用Render部署Serverless Cloudreve</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"5N6B6xSffUlXYQJF8w8wdmNt-gzGzoHsz","appKey":"3uq3onfSXrPdTVYhQbF4k2ay","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+	<a href="https://icp.gov.moe/?keyword=20220048" target="_blank">萌ICP备20220048号</a>
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
